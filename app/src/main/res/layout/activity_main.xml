@@ -9,7 +9,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/hpText4"
+        android:id="@+id/attackTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="51dp"
@@ -22,11 +22,9 @@
         android:id="@+id/defTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="32dp"
         android:text="DEF"
-        app:layout_constraintEnd_toStartOf="@+id/defInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hpText" />
 
@@ -45,10 +43,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="144dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginTop="132dp"
         android:text="HP"
-        app:layout_constraintEnd_toStartOf="@+id/hpInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weightText3" />
 
@@ -87,21 +83,21 @@
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="120dp"
-        android:layout_marginBottom="16dp"
         android:text="Reset"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/atk_Input" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/genderText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="35dp"
         android:text="Gender"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/speciesText" />
 
     <TextView
         android:id="@+id/mainText"
@@ -157,7 +153,7 @@
         app:layout_constraintTop_toBottomOf="@+id/weightInput" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/speciesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
@@ -216,14 +212,14 @@
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="28dp"
         android:text="Save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/atk_Input" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/lvlText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -236,11 +232,13 @@
         android:id="@+id/atk_Input"
         android:layout_width="104dp"
         android:layout_height="53dp"
-        android:layout_marginTop="99dp"
+        android:layout_marginTop="96dp"
         android:layout_marginEnd="28dp"
+        android:layout_marginBottom="44dp"
         android:ems="10"
         android:inputType="number"
         android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/resetButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weightInput" />
 
@@ -248,12 +246,12 @@
         android:id="@+id/defInput"
         android:layout_width="104dp"
         android:layout_height="53dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="4dp"
         android:ems="10"
         android:inputType="number"
         android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/defTxt"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hpInput" />
 
     <EditText
@@ -284,14 +282,18 @@
         android:id="@+id/hpInput"
         android:layout_width="104dp"
         android:layout_height="53dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="18dp"
+        android:layout_marginEnd="100dp"
         android:ems="10"
         android:inputType="number"
         android:maxLength="3"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/atk_Input"
         app:layout_constraintStart_toEndOf="@+id/hpText"
-        app:layout_constraintTop_toBottomOf="@+id/baseStats" />
+        app:layout_constraintTop_toBottomOf="@+id/baseStats"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/dexNumberInput"
@@ -315,6 +317,7 @@
         android:inputType="text"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/dexNumberInput"
         app:layout_constraintTop_toBottomOf="@+id/dexNumberInput" />
 
@@ -347,5 +350,11 @@
         android:text="kg"
         app:layout_constraintBottom_toTopOf="@+id/atk_Input"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ListView
+        android:layout_width="445dp"
+        android:layout_height="1024dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="691dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

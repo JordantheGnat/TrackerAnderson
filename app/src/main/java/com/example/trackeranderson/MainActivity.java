@@ -2,9 +2,13 @@ package com.example.trackeranderson;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
-
+//import android.bundle;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,20 +23,56 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    Button insertButton;
+    Button queryButton;
+    Button updateButton;
+    Button deleteButton;
+    Button nextButton;
+    Button previousButton;
+    EditText firstname;
+    EditText lastname;
+    EditText defense;
+    EditText height;
+    EditText weight;
+    EditText species;
+    EditText hp;
+    EditText name;
+    EditText dex;
+    EditText atk;
+    TextView dexText,nameText,speciesText,genderText,heightText,weightText;
+    TextView lvlText,hpText,atkText,defText;
+
+    TextView idTv;
+    TextView fnameTv;
+    TextView lnameTv;
+    Cursor mCursor;
     View.OnClickListener spinListen = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
         }
+    };
+    Uri provideUri = PokeVider.CONTENT_URI;
+    String[]dbColumns={
+            PokeVider.COLUMN_DEX,
+            PokeVider.COLUMN_NAME,
+            PokeVider.COLUMN_SPECIES,
+            PokeVider.COLUMN_GENDER,
+            PokeVider.COLUMN_HEIGHT,
+            PokeVider.COLUMN_WEIGHT,
+            PokeVider.COLUMN_LEVEL,
+            PokeVider.COLUMN_HP,
+            PokeVider.COLUMN_ATK,
+            PokeVider.COLUMN_DEF
     };
     View.OnClickListener saveListen = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             String temp;
             Boolean canFinish = true;
-            EditText dex=findViewById(R.id.dexNumberInput);
-            EditText name=findViewById(R.id.nameInput);
-            TextView nameTxt=findViewById(R.id.name_text);
-            EditText species=findViewById(R.id.speciesInput);
+            EditText dex = findViewById(R.id.dexNumberInput);
+            EditText name = findViewById(R.id.nameInput);
+            TextView nameTxt = findViewById(R.id.name_text);
+            EditText species = findViewById(R.id.speciesInput);
 
             /*
 
@@ -126,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "ATK too high or low. 5<=ATK<=526", Toast.LENGTH_LONG).show();
                 canFinish = false;
             }
-
+            String tempGender = checkButton(null);
             temp = String.valueOf(hp.getText());
             hp.setTextColor(Color.BLACK);
             int hpNum = Integer.valueOf(temp);
@@ -156,12 +196,13 @@ public class MainActivity extends AppCompatActivity {
             temp = String.valueOf(height.getText());
             height.setTextColor(Color.BLACK);
             Double heightNum = Double.valueOf(temp);
-            if(defNum<=.3||defNum>=19.99){
+            if(heightNum<=.3||heightNum>=19.99){
                 height.setTextColor(Color.RED);
                 Toast.makeText(MainActivity.this, "HEIGHT too high or low. .3<=HEIGHT<=19.99", Toast.LENGTH_LONG).show();
                 canFinish = false;
             }
             if(canFinish==true){
+                insertData();
                 Toast.makeText(MainActivity.this, "Congrats! Your catch was succesfully submitted", Toast.LENGTH_LONG).show();
                 resetFunction();
             }
@@ -169,14 +210,30 @@ public class MainActivity extends AppCompatActivity {
 
 
     };
+    public void insertData() {
+        ContentValues mNewValues = new ContentValues();
+        mNewValues.put(PokeVider.COLUMN_DEX, dex.getText().toString().trim());
+        mNewValues.put(PokeVider.COLUMN_NAME, name.getText().toString().trim());
+        mNewValues.put(PokeVider.COLUMN_SPECIES, species.getText().toString().trim());
+        mNewValues.put(PokeVider.COLUMN_GENDER, checkButton(null).trim());
+        mNewValues.put(PokeVider.COLUMN_HEIGHT, height.getText().toString().trim());
+        mNewValues.put(PokeVider.COLUMN_WEIGHT, weight.getText().toString().trim());
+        Log.i("Level Selected", level.getSelectedItem().toString());
+        mNewValues.put(PokeVider.COLUMN_LEVEL, level.getSelectedItem().toString().trim());// hm
+        mNewValues.put(PokeVider.COLUMN_HP, hp.getText().toString().trim());
+        mNewValues.put(PokeVider.COLUMN_ATK, atk.getText().toString().trim());
+        mNewValues.put(PokeVider.COLUMN_DEF, defense.getText().toString().trim());
+        if(getContentResolver().insert(PokeVider.CONTENT_URI,mNewValues)!=null){
+
+        }
+        mCursor = getContentResolver().query(provideUri, dbColumns, null, null, null);
+
+    }
 
 
         View.OnClickListener resetListen = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //I TRIED DOING THIS WITH A GROUP FOR 5 HOURS AGGGGHHHH
-                //why is there no children in a group????
-                //I know there is a way, but I was having difficulty figuring out viewgroups
                 resetFunction(); //deletion is in that function, at the bottom
 
             }};
@@ -185,49 +242,59 @@ public class MainActivity extends AppCompatActivity {
     RadioButton genderButton;
     TextView textView;
     Button resetButton,saveButton;
-    Spinner spinner;
+    Spinner level;
     Group txtBoxGroup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.table); super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main); super.onCreate(savedInstanceState);
 
         //Spinner Code
         String[] lvlArr= new String[50];
         for(int i = 0; i<50;i++){lvlArr[i]=(Integer.toString(i + 1));}//fills the lvls
-        spinner = (Spinner)findViewById(R.id.lvlSpinner);//attaches the spinners
+        level = (Spinner)findViewById(R.id.lvlSpinner);//attaches the spinners
         ArrayList<String> spinnerArray =  new ArrayList<>(Arrays.asList(lvlArr));//takes the lvl array makes it arrList
         ArrayAdapter<String> lvlArrAdapt = new ArrayAdapter<String>//because ArrayAdapters need ArrLists. not arrs.
                 (this, android.R.layout.simple_spinner_item,
                         spinnerArray); //selected item will look like a spinner set from XML
                  lvlArrAdapt.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
-        spinner.setAdapter(lvlArrAdapt);
-        spinner.findViewById(R.id.lvlSpinner);
+        level.setAdapter(lvlArrAdapt);
+        level.findViewById(R.id.lvlSpinner);
         //Lil bit of everything.
         radioGroup = findViewById(R.id.radioGroup);//I know my variable naming is trash I gotta kick that habit
         resetButton = findViewById(R.id.resetButton);
         saveButton = findViewById(R.id.saveButton);
         resetButton.setOnClickListener(resetListen);
         saveButton.setOnClickListener(saveListen);
-        spinner.setOnClickListener(spinListen);
+
+                defense=findViewById(R.id.defInput);
+        height=findViewById(R.id.heightInput);
+        weight=findViewById(R.id.weightInput);
+        species=findViewById(R.id.speciesInput);
+        hp=findViewById(R.id.hpInput);
+        name=findViewById(R.id.nameInput);
+        dex=findViewById(R.id.dexNumberInput);
+        atk=findViewById(R.id.atk_Input);
+        //level.setOnClickListener(spinListen);
 
         //Is there a way to condense all these?
 
 
     }
-    public void checkButton(View v) {
+    public String checkButton(View v) {
         int radioID = radioGroup.getCheckedRadioButtonId();
         genderButton = findViewById(radioID);
-     //   System.out.println("Selected Radio Button: " + genderButton.getText());
+        Log.i("Selected Radio Button: ", (String) genderButton.getText());//holy crap it works
+        return (String) genderButton.getText();
     }
     public void resetFunction(){
-        EditText atk=findViewById(R.id.atk_Input); atk.setText("");
-        EditText dex=findViewById(R.id.dexNumberInput); dex.setText("");
-        EditText name=findViewById(R.id.nameInput); name.setText("");
-        EditText hp=findViewById(R.id.hpInput); hp.setText("");
-        EditText species=findViewById(R.id.speciesInput); species.setText("");
-        EditText weight=findViewById(R.id.weightInput); weight.setText("");
-        EditText height=findViewById(R.id.heightInput); height.setText("");
-        EditText defense=findViewById(R.id.defInput); defense.setText("");
+        atk.setText("");
+        dex.setText("");
+        name.setText("");
+        hp.setText("");
+        species.setText("");
+        weight.setText("");
+        height.setText("");
+        defense.setText("");
     }
 }
