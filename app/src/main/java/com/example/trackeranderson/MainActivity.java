@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 //import android.bundle;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -49,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener spinListen = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
+        }
+    };
+    View.OnClickListener goToLV = new View.OnClickListener(){
+        @Override
+        public void onClick(View view){
+
         }
     };
     Uri provideUri = PokeVider.CONTENT_URI;
@@ -96,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
             int dexNum=Integer.valueOf(temp);//
             if(dexNum<=0||dexNum>=1010) {
                 canFinish = false;
-                Toast.makeText(MainActivity.this, "Dex Number" + dexNum + " failed to accept, was outside of parameters 0-1010", Toast.LENGTH_LONG).show();
+                dexText = findViewById(R.id.dexText);
+                dexText.setText( dexNum + " failed to accept, was outside of parameters 0-1010");//this works but for some reason lets it complete
                 dex.setTextColor(Color.RED);
             } else{dex.setTextColor(Color.BLACK); canFinish=true;}
 
@@ -124,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
 
                     //I HAVE NO IDEA WHAT FIXED IT
                     tempBool=false;
-
-                    Toast.makeText(MainActivity.this, "Name not taken, contains illegal characters.", Toast.LENGTH_LONG).show();
+                    nameText=findViewById(R.id.name_text);
+                    nameTxt.setText("Name not taken, contains illegal characters.");
                 }
                 }}
 
@@ -141,14 +150,15 @@ public class MainActivity extends AppCompatActivity {
                 tempBool=false;
                 species.setTextColor(Color.RED);
             }else{
-            for(int i=0;i<name.length();i++) {
+            for(int i=0;i<name.length()-1;i++) {
                 char ch = temp.charAt(i);//for some reason this has random crashes
                 if (Character.isLetter(ch) || ch == ' ') {
                     if(i==0){
                         if(Character.isLowerCase(ch)){
                             canFinish=false;tempBool = false;
                             species.setTextColor(Color.RED);
-                            Toast.makeText(MainActivity.this, "Species name not taken, contains illegal characters, or faulty capitalization", Toast.LENGTH_LONG).show();}}
+                            speciesText = findViewById(R.id.speciesText);//this one doesn't work. huh.
+                            speciesText.setText("Species name not taken, contains illegal characters, or faulty capitalization");}}
                 }else{
                     canFinish=false;
                     tempBool=false;
@@ -163,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
             int atkNum = Integer.valueOf(temp);
             if(atkNum<=5||atkNum>=526){
                 atk.setTextColor(Color.RED);
-                Toast.makeText(MainActivity.this, "ATK too high or low. 5<=ATK<=526", Toast.LENGTH_LONG).show();
+                atkText = findViewById(R.id.attackTV);
+                atkText.setText("ATK too high or low. 5<=ATK<=526");
                 canFinish = false;
             }
             String tempGender = checkButton(null);
@@ -172,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
             int hpNum = Integer.valueOf(temp);
             if(hpNum<=1||hpNum>=362){
                 hp.setTextColor(Color.RED);
-                Toast.makeText(MainActivity.this, "HP too high or low. 1<=HP<=362", Toast.LENGTH_LONG).show();
+                hpText = findViewById(R.id.hpText);
+                hpText.setText("HP too high or low. 1<=HP<=362");
                 canFinish = false;
             }
 
@@ -181,7 +193,8 @@ public class MainActivity extends AppCompatActivity {
             int defNum = Integer.valueOf(temp);
             if(defNum<=5||defNum>=614){
                 defense.setTextColor(Color.RED);
-                Toast.makeText(MainActivity.this, "DEF too high or low. 5<=DEF<=614", Toast.LENGTH_LONG).show();
+                defText =findViewById(R.id.defTxt);
+                defText.setText("DEF too high or low. 5<=DEF<=614");
                 canFinish = false;
             }
 
@@ -190,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
             Double weightNum = Double.valueOf(temp);
             if(defNum<=.1||defNum>=820.0){
                 weight.setTextColor(Color.RED);
-                Toast.makeText(MainActivity.this, "WEIGHT too high or low. .1<=WEIGHT<=820.0", Toast.LENGTH_LONG).show();
+                weightText = findViewById(R.id.weightText);
+                weightText.setText("WEIGHT too high or low. .1<=WEIGHT<=820.0");
                 canFinish = false;
             }
             temp = String.valueOf(height.getText());
@@ -198,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
             Double heightNum = Double.valueOf(temp);
             if(heightNum<=.3||heightNum>=19.99){
                 height.setTextColor(Color.RED);
-                Toast.makeText(MainActivity.this, "HEIGHT too high or low. .3<=HEIGHT<=19.99", Toast.LENGTH_LONG).show();
+                heightText = findViewById(R.id.heightText);
+                heightText.setText("HEIGHT too high or low. .1<=WEIGHT<=19.99"); //just realized none of these switch back.oops.
                 canFinish = false;
             }
             if(canFinish==true){
@@ -223,11 +238,26 @@ public class MainActivity extends AppCompatActivity {
         mNewValues.put(PokeVider.COLUMN_HP, hp.getText().toString().trim());
         mNewValues.put(PokeVider.COLUMN_ATK, atk.getText().toString().trim());
         mNewValues.put(PokeVider.COLUMN_DEF, defense.getText().toString().trim());
+        if (!isDuplicate(mNewValues)) {
+            getContentResolver().insert(PokeVider.CONTENT_URI, mNewValues);
+        }
         if(getContentResolver().insert(PokeVider.CONTENT_URI,mNewValues)!=null){
 
         }
         mCursor = getContentResolver().query(provideUri, dbColumns, null, null, null);
 
+    }
+    public boolean isDuplicate(ContentValues dupeVals){
+        String[] projection = {BaseColumns._ID};
+        String selection = PokeVider.COLUMN_DEX + " = ? AND " +
+                PokeVider.COLUMN_NAME + " = ? AND " +
+                PokeVider.COLUMN_SPECIES + " = ?";
+        String[] selectionArgs = {
+                dupeVals.getAsString(PokeVider.COLUMN_DEX),
+                dupeVals.getAsString(PokeVider.COLUMN_NAME),
+                dupeVals.getAsString(PokeVider.COLUMN_SPECIES)
+        };
+        return false;
     }
 
 
@@ -275,6 +305,15 @@ public class MainActivity extends AppCompatActivity {
         name=findViewById(R.id.nameInput);
         dex=findViewById(R.id.dexNumberInput);
         atk=findViewById(R.id.atk_Input);
+        Button goToListButton = findViewById(R.id.goToListButton);
+        goToListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the ListActivity
+                Intent intent = new Intent(MainActivity.this, ListViewActivity.class);
+                startActivity(intent);
+            }
+        });
         //level.setOnClickListener(spinListen);
 
         //Is there a way to condense all these?

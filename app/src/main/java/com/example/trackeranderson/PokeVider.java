@@ -52,7 +52,7 @@ public class PokeVider extends ContentProvider {
     private static final String SQL_CREATE_MAIN = "CREATE TABLE " +
             TABLE_POKETRACKER +  // Table's name
             "(" +               // The columns in the table
-            " _ID INTEGER PRIMARY KEY, " +
+            " _id INTEGER PRIMARY KEY, " +
             COLUMN_DEX +
             " TEXT," +
             COLUMN_NAME +
